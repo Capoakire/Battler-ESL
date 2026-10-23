@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Routine Battle Engine – Advanced</title>
+<title>Daily Routine Battle Engine</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -12,72 +12,61 @@
     --good: #22c55e;
     --bad: #ef4444;
     --gold: #fbbf24;
-    --purple: #a855f7;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
     color: #e2e8f0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding: 12px;
   }
-
   #game {
     width: 100%;
-    max-width: 780px;
+    max-width: 760px;
     background: var(--card);
     border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.55);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     overflow: hidden;
     position: relative;
   }
-
   .header {
     background: linear-gradient(90deg, #1e3a8a, #4c1d95);
-    padding: 11px 16px;
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.95rem;
   }
-  .header h1 { font-size: 1.1rem; font-weight: 700; }
-
+  .header h1 { font-size: 1.15rem; font-weight: 700; }
   .arena {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     padding: 16px 14px 10px;
   }
-
   .fighter {
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(15,23,42,0.7);
     border-radius: 14px;
     padding: 12px;
     text-align: center;
     border: 2px solid transparent;
     position: relative;
-    transition: all 0.25s;
   }
   .fighter.player { border-color: #3b82f6; }
   .fighter.enemy  { border-color: #a855f7; }
-
   .emoji {
     font-size: 3.8rem;
     line-height: 1;
     margin-bottom: 4px;
     display: inline-block;
-    transition: transform 0.2s;
   }
   .fighter.hit .emoji { animation: shake 0.35s; }
   .fighter.crit .emoji { animation: critPulse 0.45s; }
   .fighter.defeat .emoji { animation: fall 0.7s forwards; }
-
   @keyframes shake {
     0%,100% { transform: translateX(0); }
     25% { transform: translateX(-8px); }
@@ -91,16 +80,13 @@
   @keyframes fall {
     to { transform: translateY(40px) rotate(15deg); opacity: 0; }
   }
-
   .name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
-
   .status {
     font-size: 0.72rem;
     min-height: 16px;
     margin-bottom: 4px;
     color: #fbbf24;
   }
-
   .hp-bar {
     height: 12px;
     background: #334155;
@@ -115,13 +101,11 @@
   }
   .player .hp-fill { background: linear-gradient(90deg, #22c55e, #16a34a); }
   .enemy  .hp-fill { background: linear-gradient(90deg, #a855f7, #7c3aed); }
-
   .hp-text { font-size: 0.78rem; opacity: 0.85; }
-
   #log {
-    height: 86px;
+    height: 90px;
     overflow-y: auto;
-    padding: 7px 14px;
+    padding: 8px 14px;
     font-size: 0.88rem;
     line-height: 1.35;
     background: rgba(0,0,0,0.28);
@@ -133,17 +117,13 @@
   #log .info { color: #93c5fd; }
   #log .crit { color: #fbbf24; font-weight: 700; }
   #log .status { color: #c084fc; }
-
-  /* Tabs for Attack / Item */
   .tabs {
     display: flex;
-    gap: 0;
-    padding: 0 14px;
     background: #0f172a;
   }
   .tab {
     flex: 1;
-    padding: 9px;
+    padding: 10px;
     text-align: center;
     font-weight: 600;
     font-size: 0.9rem;
@@ -156,29 +136,24 @@
     background: #334155;
     color: white;
   }
-
   #actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 7px;
+    gap: 8px;
     padding: 12px 14px 16px;
   }
   .act {
     background: #334155;
     border: none;
     color: white;
-    padding: 11px 9px;
+    padding: 12px 10px;
     border-radius: 11px;
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
     text-align: left;
-    transition: all 0.15s;
   }
-  .act:hover:not(:disabled) {
-    background: #475569;
-    transform: translateY(-1px);
-  }
+  .act:hover:not(:disabled) { background: #475569; }
   .act:disabled { opacity: 0.4; cursor: not-allowed; }
   .act small {
     display: block;
@@ -187,27 +162,10 @@
     font-weight: 400;
     margin-top: 2px;
   }
-
-  /* Level up popup */
-  #levelup {
+  .screen, #levelup {
     position: absolute;
     inset: 0;
-    background: rgba(15,23,42,0.92);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 30;
-    text-align: center;
-    padding: 24px;
-  }
-  #levelup h2 { color: var(--gold); font-size: 1.8rem; margin-bottom: 8px; }
-  #levelup p { margin-bottom: 16px; line-height: 1.4; }
-
-  .screen {
-    position: absolute;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.96);
+    background: rgba(15,23,42,0.96);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -217,31 +175,28 @@
     text-align: center;
     padding: 28px;
   }
-  .screen h2 { font-size: 1.9rem; }
-  .screen p { opacity: 0.85; max-width: 340px; line-height: 1.4; }
-
+  #levelup { z-index: 30; }
+  .screen h2, #levelup h2 { font-size: 1.9rem; }
+  #levelup h2 { color: var(--gold); }
   .btn {
     background: var(--accent);
     color: #0f172a;
     border: none;
-    padding: 12px 26px;
+    padding: 13px 28px;
     border-radius: 12px;
     font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
   }
-  .btn:hover { transform: scale(1.04); }
-
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
-
 <div id="game">
-  <!-- Start -->
+  <!-- Start Screen -->
   <div id="start-screen" class="screen">
     <h2>Daily Routine<br>Battle Engine</h2>
-    <p>Turn-based combat with critical hits, status effects, items and leveling.</p>
+    <p>Turn-based combat with critical hits, status effects, items & leveling.</p>
     <button class="btn" id="start-btn">Start Adventure</button>
   </div>
 
@@ -249,13 +204,8 @@
   <div id="battle-ui" class="hidden">
     <div class="header">
       <h1>Daily Routine RPG</h1>
-      <div>
-        Lv.<span id="level">1</span> · 
-        <span id="stage">Battle 1</span> · 
-        Score <span id="score">0</span>
-      </div>
+      <div>Lv.<span id="level">1</span> · <span id="stage">Battle 1</span> · Score <span id="score">0</span></div>
     </div>
-
     <div class="arena">
       <div class="fighter player" id="player-card">
         <div class="emoji" id="player-emoji">🦸</div>
@@ -264,7 +214,6 @@
         <div class="hp-bar"><div class="hp-fill" id="player-hp-fill"></div></div>
         <div class="hp-text" id="player-hp-text">HP 50/50</div>
       </div>
-
       <div class="fighter enemy" id="enemy-card">
         <div class="emoji" id="enemy-emoji">🛏️</div>
         <div class="name" id="enemy-name">Wake up</div>
@@ -273,9 +222,7 @@
         <div class="hp-text" id="enemy-hp-text">HP 30/30</div>
       </div>
     </div>
-
     <div id="log"></div>
-
     <div class="tabs">
       <button class="tab active" data-tab="attack">Attack</button>
       <button class="tab" data-tab="item">Items</button>
@@ -290,7 +237,7 @@
     <button class="btn" id="levelup-btn">Continue</button>
   </div>
 
-  <!-- End -->
+  <!-- End Screen -->
   <div id="end-screen" class="screen hidden">
     <h2 id="end-title">Victory!</h2>
     <p id="end-text"></p>
@@ -299,82 +246,48 @@
 </div>
 
 <script>
-/* ============================================================
-   ADVANCED BATTLE ENGINE
-   Critical hits • Status effects • Items • Leveling
-   ============================================================ */
-
 const PLAYER_MOVES = [
-  { name: "Alarm Blast",     power: 14, acc: 92, crit: 18, desc: "Strong physical hit" },
-  { name: "Toothbrush Slash",power: 10, acc: 100,crit: 12, desc: "Reliable damage" },
-  { name: "Coffee Rush",     power: 8,  acc: 88, crit: 25, desc: "High crit chance" },
-  { name: "Focus Guard",     power: 0,  acc: 100,crit: 0,  desc: "Raise defense + clear status" }
+  { name: "Alarm Blast",      power: 14, acc: 92, crit: 18, desc: "Strong physical hit" },
+  { name: "Toothbrush Slash", power: 10, acc: 100, crit: 12, desc: "Reliable damage" },
+  { name: "Coffee Rush",      power: 8,  acc: 88, crit: 25, desc: "High crit chance" },
+  { name: "Focus Guard",      power: 0,  acc: 100, crit: 0,  desc: "Defense up + cure status" }
 ];
 
 const ITEMS = [
-  { id: "potion",   name: "Potion",        desc: "Restore 28 HP",     count: 3 },
-  { id: "energy",   name: "Energy Drink",  desc: "Restore 18 HP + ATK up", count: 2 },
-  { id: "focus",    name: "Focus Pill",    desc: "Cure status effects", count: 2 }
+  { id: "potion", name: "Potion",       desc: "Restore 28 HP",          count: 3 },
+  { id: "energy", name: "Energy Drink", desc: "Restore 18 HP + ATK up",  count: 2 },
+  { id: "focus",  name: "Focus Pill",   desc: "Cure all status effects", count: 2 }
 ];
 
 const ENEMIES = [
-  {
-    name: "Wake up", emoji: "🛏️", maxHp: 34, atk: 8,
-    moves: [
-      { name: "Snooze", power: 7, acc: 90, effect: null },
-      { name: "Heavy Blanket", power: 11, acc: 80, effect: null },
-      { name: "Dream Drift", power: 5, acc: 95, effect: "sleep" }
-    ]
-  },
-  {
-    name: "Brush teeth", emoji: "🪥", maxHp: 38, atk: 9,
-    moves: [
-      { name: "Foam Spray", power: 9, acc: 95, effect: null },
-      { name: "Mint Sting", power: 12, acc: 85, effect: "burn" },
-      { name: "Brush Combo", power: 8, acc: 100, effect: null }
-    ]
-  },
-  {
-    name: "Commute", emoji: "🚌", maxHp: 42, atk: 10,
-    moves: [
-      { name: "Traffic Jam", power: 10, acc: 90, effect: null },
-      { name: "Late Bell", power: 14, acc: 75, effect: "stun" },
-      { name: "Crowd Push", power: 9, acc: 95, effect: null }
-    ]
-  },
-  {
-    name: "Homework", emoji: "📚", maxHp: 46, atk: 11,
-    moves: [
-      { name: "Page Flip", power: 10, acc: 100, effect: null },
-      { name: "Deadline Panic", power: 15, acc: 80, effect: "burn" },
-      { name: "Equation Storm", power: 11, acc: 90, effect: null }
-    ]
-  },
-  {
-    name: "Dinner", emoji: "🍲", maxHp: 40, atk: 10,
-    moves: [
-      { name: "Spice Burn", power: 12, acc: 85, effect: "burn" },
-      { name: "Full Plate", power: 9, acc: 100, effect: null },
-      { name: "Chop Attack", power: 13, acc: 80, effect: null }
-    ]
-  },
-  {
-    name: "Sleep", emoji: "🌙", maxHp: 44, atk: 11,
-    moves: [
-      { name: "Yawn Wave", power: 9, acc: 95, effect: "sleep" },
-      { name: "Pillow Slam", power: 14, acc: 80, effect: null },
-      { name: "Deep Slumber", power: 7, acc: 100, effect: "sleep" }
-    ]
-  },
-  {
-    name: "The Teacher", emoji: "👨‍🏫", maxHp: 62, atk: 13, isBoss: true,
-    moves: [
-      { name: "Lesson Plan", power: 13, acc: 90, effect: null },
-      { name: "Pop Quiz", power: 17, acc: 75, effect: "stun" },
-      { name: "Detention", power: 11, acc: 100, effect: "burn" },
-      { name: "Final Exam", power: 20, acc: 70, effect: null }
-    ]
-  }
+  { name: "Wake up",     emoji: "🛏️", maxHp: 34, atk: 8,  moves: [
+    { name: "Snooze", power: 7, acc: 90 }, { name: "Heavy Blanket", power: 11, acc: 80 },
+    { name: "Dream Drift", power: 5, acc: 95, effect: "sleep" }
+  ]},
+  { name: "Brush teeth", emoji: "🪥", maxHp: 38, atk: 9,  moves: [
+    { name: "Foam Spray", power: 9, acc: 95 }, { name: "Mint Sting", power: 12, acc: 85, effect: "burn" },
+    { name: "Brush Combo", power: 8, acc: 100 }
+  ]},
+  { name: "Commute",     emoji: "🚌", maxHp: 42, atk: 10, moves: [
+    { name: "Traffic Jam", power: 10, acc: 90 }, { name: "Late Bell", power: 14, acc: 75, effect: "stun" },
+    { name: "Crowd Push", power: 9, acc: 95 }
+  ]},
+  { name: "Homework",    emoji: "📚", maxHp: 46, atk: 11, moves: [
+    { name: "Page Flip", power: 10, acc: 100 }, { name: "Deadline Panic", power: 15, acc: 80, effect: "burn" },
+    { name: "Equation Storm", power: 11, acc: 90 }
+  ]},
+  { name: "Dinner",      emoji: "🍲", maxHp: 40, atk: 10, moves: [
+    { name: "Spice Burn", power: 12, acc: 85, effect: "burn" }, { name: "Full Plate", power: 9, acc: 100 },
+    { name: "Chop Attack", power: 13, acc: 80 }
+  ]},
+  { name: "Sleep",       emoji: "🌙", maxHp: 44, atk: 11, moves: [
+    { name: "Yawn Wave", power: 9, acc: 95, effect: "sleep" }, { name: "Pillow Slam", power: 14, acc: 80 },
+    { name: "Deep Slumber", power: 7, acc: 100, effect: "sleep" }
+  ]},
+  { name: "The Teacher", emoji: "👨‍🏫", maxHp: 62, atk: 13, isBoss: true, moves: [
+    { name: "Lesson Plan", power: 13, acc: 90 }, { name: "Pop Quiz", power: 17, acc: 75, effect: "stun" },
+    { name: "Detention", power: 11, acc: 100, effect: "burn" }, { name: "Final Exam", power: 20, acc: 70 }
+  ]}
 ];
 
 class BattleEngine {
@@ -389,71 +302,60 @@ class BattleEngine {
     this.items = [];
 
     this.$ = {
-      start: document.getElementById('start-screen'),
-      battle: document.getElementById('battle-ui'),
-      end: document.getElementById('end-screen'),
-      levelup: document.getElementById('levelup'),
-      playerEmoji: document.getElementById('player-emoji'),
-      enemyEmoji: document.getElementById('enemy-emoji'),
-      enemyName: document.getElementById('enemy-name'),
-      playerFill: document.getElementById('player-hp-fill'),
-      enemyFill: document.getElementById('enemy-hp-fill'),
-      playerText: document.getElementById('player-hp-text'),
-      enemyText: document.getElementById('enemy-hp-text'),
-      playerCard: document.getElementById('player-card'),
-      enemyCard: document.getElementById('enemy-card'),
-      playerStatus: document.getElementById('player-status'),
-      enemyStatus: document.getElementById('enemy-status'),
-      log: document.getElementById('log'),
-      actions: document.getElementById('actions'),
-      stage: document.getElementById('stage'),
-      score: document.getElementById('score'),
-      level: document.getElementById('level'),
-      endTitle: document.getElementById('end-title'),
-      endText: document.getElementById('end-text'),
-      levelupText: document.getElementById('levelup-text')
+      start: document.getElementById("start-screen"),
+      battle: document.getElementById("battle-ui"),
+      end: document.getElementById("end-screen"),
+      levelup: document.getElementById("levelup"),
+      playerEmoji: document.getElementById("player-emoji"),
+      enemyEmoji: document.getElementById("enemy-emoji"),
+      enemyName: document.getElementById("enemy-name"),
+      playerFill: document.getElementById("player-hp-fill"),
+      enemyFill: document.getElementById("enemy-hp-fill"),
+      playerText: document.getElementById("player-hp-text"),
+      enemyText: document.getElementById("enemy-hp-text"),
+      playerCard: document.getElementById("player-card"),
+      enemyCard: document.getElementById("enemy-card"),
+      playerStatus: document.getElementById("player-status"),
+      enemyStatus: document.getElementById("enemy-status"),
+      log: document.getElementById("log"),
+      actions: document.getElementById("actions"),
+      stage: document.getElementById("stage"),
+      score: document.getElementById("score"),
+      level: document.getElementById("level"),
+      endTitle: document.getElementById("end-title"),
+      endText: document.getElementById("end-text"),
+      levelupText: document.getElementById("levelup-text")
     };
 
-    document.getElementById('start-btn').onclick = () => this.start();
-    document.getElementById('restart-btn').onclick = () => this.start();
-    document.getElementById('levelup-btn').onclick = () => {
-      this.$.levelup.classList.add('hidden');
+    document.getElementById("start-btn").addEventListener("click", () => this.start());
+    document.getElementById("restart-btn").addEventListener("click", () => this.start());
+    document.getElementById("levelup-btn").addEventListener("click", () => {
+      this.$.levelup.classList.add("hidden");
       this.nextEnemy();
-    };
+    });
 
-    // Tabs
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.onclick = () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
         this.currentTab = tab.dataset.tab;
         this.renderActions();
-      };
+      });
     });
   }
 
   resetPlayer() {
     this.player = {
-      level: 1,
-      maxHp: 50,
-      hp: 50,
-      atk: 11,
-      def: 1,
-      exp: 0,
-      nextExp: 25,
-      status: null,       // sleep / burn / stun
-      statusTurns: 0,
-      atkBoost: 0
+      level: 1, maxHp: 50, hp: 50, atk: 11,
+      exp: 0, nextExp: 25,
+      status: null, statusTurns: 0, atkBoost: 0
     };
   }
 
   start() {
     this.resetPlayer();
     this.enemies = ENEMIES.map(e => ({
-      ...e,
-      hp: e.maxHp,
-      status: null,
-      statusTurns: 0
+      ...e, hp: e.maxHp, status: null, statusTurns: 0
     }));
     this.index = 0;
     this.score = 0;
@@ -462,12 +364,12 @@ class BattleEngine {
     this.items = ITEMS.map(i => ({ ...i }));
     this.currentTab = "attack";
 
-    this.$.start.classList.add('hidden');
-    this.$.end.classList.add('hidden');
-    this.$.levelup.classList.add('hidden');
-    this.$.battle.classList.remove('hidden');
-    this.$.score.textContent = '0';
-    this.$.level.textContent = '1';
+    this.$.start.classList.add("hidden");
+    this.$.end.classList.add("hidden");
+    this.$.levelup.classList.add("hidden");
+    this.$.battle.classList.remove("hidden");
+    this.$.score.textContent = "0";
+    this.$.level.textContent = "1";
     this.clearLog();
     this.nextEnemy();
   }
@@ -482,30 +384,30 @@ class BattleEngine {
     const e = this.enemy;
     this.$.enemyEmoji.textContent = e.emoji;
     this.$.enemyName.textContent = e.name;
-    this.$.enemyCard.classList.remove('defeat', 'hit', 'crit');
-    this.$.playerCard.classList.remove('hit', 'crit');
+    this.$.enemyCard.classList.remove("defeat", "hit", "crit");
+    this.$.playerCard.classList.remove("hit", "crit");
     this.$.stage.textContent = e.isBoss ? "FINAL BOSS" : `Battle ${this.index + 1}`;
     this.updateBars();
     this.updateStatusDisplay();
     this.log(`${e.name} appears!`, "info");
     this.renderActions();
+    this.busy = false;
   }
 
   renderActions() {
-    this.$.actions.innerHTML = '';
-
+    this.$.actions.innerHTML = "";
     if (this.currentTab === "attack") {
       PLAYER_MOVES.forEach(m => {
-        const btn = document.createElement('button');
-        btn.className = 'act';
+        const btn = document.createElement("button");
+        btn.className = "act";
         btn.innerHTML = `${m.name}<small>${m.desc}</small>`;
         btn.onclick = () => this.playerAttack(m);
         this.$.actions.appendChild(btn);
       });
     } else {
       this.items.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'act';
+        const btn = document.createElement("button");
+        btn.className = "act";
         btn.disabled = item.count <= 0;
         btn.innerHTML = `${item.name} ×${item.count}<small>${item.desc}</small>`;
         btn.onclick = () => this.useItem(item);
@@ -514,20 +416,19 @@ class BattleEngine {
     }
   }
 
-  // ---------- PLAYER TURN ----------
   async playerAttack(move) {
     if (this.busy) return;
     this.busy = true;
     this.disableActions(true);
     this.guard = false;
 
-    // Status check – Sleep / Stun
+    // Sleep / Stun
     if (this.player.status === "sleep" || this.player.status === "stun") {
-      this.log(`You are ${this.player.status === "sleep" ? "asleep" : "stunned"} and can't move!`, "status");
+      this.log(`You are ${this.player.status} and can't move!`, "status");
       this.player.statusTurns--;
       if (this.player.statusTurns <= 0) {
         this.player.status = null;
-        this.log("You woke up / recovered!", "good");
+        this.log("You recovered!", "good");
       }
       this.updateStatusDisplay();
       await this.wait(800);
@@ -535,67 +436,53 @@ class BattleEngine {
       return;
     }
 
-    // Accuracy
     if (Math.random() * 100 > move.acc) {
       this.log(`You used ${move.name}... but it missed!`, "bad");
-      this.beep(170, 0.12);
       await this.wait(700);
       await this.enemyTurn();
       return;
     }
 
-    // Focus Guard
-    if (move.power === 0) {
+    if (move.power === 0) { // Focus Guard
       this.guard = true;
-      if (this.player.status) {
-        this.player.status = null;
-        this.player.statusTurns = 0;
-        this.log("Focus Guard! Defense up and status cleared.", "good");
-      } else {
-        this.log("Focus Guard! Defense raised this turn.", "good");
-      }
+      this.player.status = null;
+      this.player.statusTurns = 0;
+      this.log("Focus Guard! Defense up + status cleared.", "good");
       this.updateStatusDisplay();
-      this.beep(620, 0.1);
       await this.wait(700);
       await this.enemyTurn();
       return;
     }
 
-    // Calculate damage + crit
-    let dmg = this.calcDamage(this.player.atk + this.player.atkBoost, move.power, 1);
-    let isCrit = Math.random() * 100 < move.crit;
-
+    let dmg = this.calcDamage(this.player.atk + this.player.atkBoost, move.power);
+    const isCrit = Math.random() * 100 < move.crit;
     if (isCrit) {
       dmg = Math.floor(dmg * 1.75);
-      this.$.enemyCard.classList.add('crit');
-      this.log(`CRITICAL HIT! ${move.name} deals ${dmg} damage!`, "crit");
-      this.beep(980, 0.12);
+      this.$.enemyCard.classList.add("crit");
+      this.log(`CRITICAL HIT! ${move.name} deals ${dmg}!`, "crit");
     } else {
-      this.$.enemyCard.classList.add('hit');
+      this.$.enemyCard.classList.add("hit");
       this.log(`You used ${move.name}! Dealt ${dmg} damage.`, "good");
-      this.beep(740, 0.09);
     }
 
     this.enemy.hp = Math.max(0, this.enemy.hp - dmg);
     this.updateBars();
-
     await this.wait(550);
-    this.$.enemyCard.classList.remove('hit', 'crit');
+    this.$.enemyCard.classList.remove("hit", "crit");
 
-    // Burn damage on enemy if it has burn
-    if (this.enemy.status === "burn") {
-      const burnDmg = Math.max(2, Math.floor(this.enemy.maxHp * 0.06));
-      this.enemy.hp = Math.max(0, this.enemy.hp - burnDmg);
-      this.log(`${this.enemy.name} takes ${burnDmg} burn damage.`, "status");
+    // Enemy burn tick
+    if (this.enemy.status === "burn" && this.enemy.hp > 0) {
+      const burn = Math.max(2, Math.floor(this.enemy.maxHp * 0.06));
+      this.enemy.hp = Math.max(0, this.enemy.hp - burn);
+      this.log(`${this.enemy.name} takes ${burn} burn damage.`, "status");
       this.updateBars();
-      await this.wait(400);
+      await this.wait(350);
     }
 
     if (this.enemy.hp <= 0) {
       await this.handleEnemyDefeat();
       return;
     }
-
     await this.enemyTurn();
   }
 
@@ -608,7 +495,7 @@ class BattleEngine {
     if (item.id === "potion") {
       const heal = 28;
       this.player.hp = Math.min(this.player.maxHp, this.player.hp + heal);
-      this.log(`Used Potion! Restored ${heal} HP.`, "good");
+      this.log(`Used Potion! +${heal} HP.`, "good");
     } else if (item.id === "energy") {
       const heal = 18;
       this.player.hp = Math.min(this.player.maxHp, this.player.hp + heal);
@@ -617,28 +504,21 @@ class BattleEngine {
     } else if (item.id === "focus") {
       this.player.status = null;
       this.player.statusTurns = 0;
-      this.log("Used Focus Pill! Status effects cured.", "good");
+      this.log("Used Focus Pill! Status cured.", "good");
     }
-
     this.updateBars();
     this.updateStatusDisplay();
-    this.beep(520, 0.1);
     await this.wait(700);
     await this.enemyTurn();
   }
 
-  // ---------- ENEMY TURN ----------
   async enemyTurn() {
     const e = this.enemy;
 
-    // Enemy status
     if (e.status === "sleep" || e.status === "stun") {
-      this.log(`${e.name} is ${e.status === "sleep" ? "asleep" : "stunned"}!`, "status");
+      this.log(`${e.name} is ${e.status}!`, "status");
       e.statusTurns--;
-      if (e.statusTurns <= 0) {
-        e.status = null;
-        this.log(`${e.name} recovered!`, "info");
-      }
+      if (e.statusTurns <= 0) e.status = null;
       this.updateStatusDisplay();
       await this.wait(700);
       this.finishTurn();
@@ -646,25 +526,19 @@ class BattleEngine {
     }
 
     const move = e.moves[Math.floor(Math.random() * e.moves.length)];
-
-    // Accuracy
     if (Math.random() * 100 > move.acc) {
-      this.log(`${e.name} used ${move.name}... but missed!`, "info");
-      this.beep(190, 0.1);
+      this.log(`${e.name} used ${move.name}... missed!`, "info");
       await this.wait(700);
       this.finishTurn();
       return;
     }
 
-    // Damage
-    let dmg = this.calcDamage(e.atk, move.power, this.guard ? 2.4 : 1);
+    let dmg = this.calcDamage(e.atk, move.power, this.guard ? 2.3 : 1);
     this.player.hp = Math.max(0, this.player.hp - dmg);
-    this.$.playerCard.classList.add('hit');
+    this.$.playerCard.classList.add("hit");
     this.log(`${e.name} used ${move.name}! Dealt ${dmg} damage.`, "bad");
-    this.beep(210, 0.11);
     this.updateBars();
 
-    // Apply effect
     if (move.effect && !this.player.status && Math.random() < 0.55) {
       this.player.status = move.effect;
       this.player.statusTurns = move.effect === "burn" ? 3 : 2;
@@ -673,15 +547,15 @@ class BattleEngine {
     }
 
     await this.wait(500);
-    this.$.playerCard.classList.remove('hit');
+    this.$.playerCard.classList.remove("hit");
 
-    // Player burn
-    if (this.player.status === "burn") {
-      const burnDmg = Math.max(2, Math.floor(this.player.maxHp * 0.05));
-      this.player.hp = Math.max(0, this.player.hp - burnDmg);
-      this.log(`You take ${burnDmg} burn damage.`, "status");
+    // Player burn tick
+    if (this.player.status === "burn" && this.player.hp > 0) {
+      const burn = Math.max(2, Math.floor(this.player.maxHp * 0.05));
+      this.player.hp = Math.max(0, this.player.hp - burn);
+      this.log(`You take ${burn} burn damage.`, "status");
       this.updateBars();
-      await this.wait(400);
+      await this.wait(350);
     }
 
     if (this.player.hp <= 0) {
@@ -691,39 +565,32 @@ class BattleEngine {
       return;
     }
 
-    // Decay atk boost
-    if (this.player.atkBoost > 0) this.player.atkBoost = Math.max(0, this.player.atkBoost - 1);
-
+    if (this.player.atkBoost > 0) this.player.atkBoost--;
     this.finishTurn();
   }
 
   async handleEnemyDefeat() {
-    this.$.enemyCard.classList.add('defeat');
+    this.$.enemyCard.classList.add("defeat");
     this.score++;
     this.$.score.textContent = this.score;
     this.log(`${this.enemy.name} was defeated!`, "good");
-    this.beep(880, 0.12);
 
-    // EXP
     const expGain = this.enemy.isBoss ? 40 : 18 + this.index * 3;
     this.player.exp += expGain;
     this.log(`Gained ${expGain} EXP.`, "info");
-
     await this.wait(900);
 
     if (this.enemy.isBoss) {
-      this.log("The Teacher falls... you mastered the daily routine!", "good");
+      this.log("The Teacher falls! You mastered the daily routine!", "good");
       await this.wait(1100);
       this.end(true);
       return;
     }
 
-    // Level up check
+    this.index++;
     if (this.player.exp >= this.player.nextExp) {
       this.doLevelUp();
     } else {
-      this.index++;
-      this.busy = false;
       this.nextEnemy();
     }
   }
@@ -732,28 +599,17 @@ class BattleEngine {
     this.player.level++;
     this.player.exp -= this.player.nextExp;
     this.player.nextExp = Math.floor(this.player.nextExp * 1.45);
-
     const hpGain = 6 + Math.floor(Math.random() * 4);
     const atkGain = 1 + (Math.random() < 0.5 ? 1 : 0);
-
     this.player.maxHp += hpGain;
-    this.player.hp = this.player.maxHp; // full heal on level up
+    this.player.hp = this.player.maxHp;
     this.player.atk += atkGain;
-
     this.$.level.textContent = this.player.level;
     this.$.levelupText.innerHTML = `
       You reached <strong>Level ${this.player.level}</strong>!<br>
       Max HP +${hpGain} → ${this.player.maxHp}<br>
-      Attack +${atkGain} → ${this.player.atk}
-    `;
-    this.$.levelup.classList.remove('hidden');
-    this.beep(523, 0.1);
-    setTimeout(() => this.beep(659, 0.1), 120);
-    setTimeout(() => this.beep(784, 0.18), 240);
-
-    // After continuing, go to next enemy
-    this.index++;
-    this.busy = false;
+      Attack +${atkGain} → ${this.player.atk}`;
+    this.$.levelup.classList.remove("hidden");
   }
 
   finishTurn() {
@@ -762,7 +618,6 @@ class BattleEngine {
     this.renderActions();
   }
 
-  // ---------- HELPERS ----------
   calcDamage(atk, power, defMult = 1) {
     const base = (atk * power) / 11;
     const variance = 0.82 + Math.random() * 0.36;
@@ -770,8 +625,8 @@ class BattleEngine {
   }
 
   updateBars() {
-    this.$.playerFill.style.width = `${(this.player.hp / this.player.maxHp) * 100}%`;
-    this.$.enemyFill.style.width  = `${(this.enemy.hp / this.enemy.maxHp) * 100}%`;
+    this.$.playerFill.style.width = (this.player.hp / this.player.maxHp * 100) + "%";
+    this.$.enemyFill.style.width  = (this.enemy.hp / this.enemy.maxHp * 100) + "%";
     this.$.playerText.textContent = `HP ${this.player.hp}/${this.player.maxHp}`;
     this.$.enemyText.textContent  = `HP ${this.enemy.hp}/${this.enemy.maxHp}`;
   }
@@ -779,60 +634,47 @@ class BattleEngine {
   updateStatusDisplay() {
     this.$.playerStatus.textContent = this.player.status
       ? `⚡ ${this.player.status.toUpperCase()} (${this.player.statusTurns})`
-      : (this.player.atkBoost > 0 ? `⬆ ATK` : "");
+      : (this.player.atkBoost > 0 ? "⬆ ATK" : "");
     this.$.enemyStatus.textContent = this.enemy.status
       ? `⚡ ${this.enemy.status.toUpperCase()} (${this.enemy.statusTurns})`
       : "";
   }
 
   log(text, type = "") {
-    const line = document.createElement('div');
-    line.className = type;
-    line.textContent = text;
-    this.$.log.appendChild(line);
+    const div = document.createElement("div");
+    div.className = type;
+    div.textContent = text;
+    this.$.log.appendChild(div);
     this.$.log.scrollTop = this.$.log.scrollHeight;
   }
 
-  clearLog() { this.$.log.innerHTML = ''; }
+  clearLog() { this.$.log.innerHTML = ""; }
 
   disableActions(state) {
     [...this.$.actions.children].forEach(b => b.disabled = state);
   }
 
   end(victory) {
-    this.$.battle.classList.add('hidden');
-    this.$.end.classList.remove('hidden');
+    this.$.battle.classList.add("hidden");
+    this.$.end.classList.remove("hidden");
     if (victory) {
       this.$.endTitle.textContent = "Victory!";
       this.$.endText.textContent = `You conquered every daily task!\nFinal Level: ${this.player.level}\nScore: ${this.score}`;
-      this.beep(523, 0.1);
-      setTimeout(() => this.beep(659, 0.1), 130);
-      setTimeout(() => this.beep(784, 0.2), 260);
     } else {
       this.$.endTitle.textContent = "Defeat";
       this.$.endText.textContent = `The daily grind overwhelmed you.\nReached Level ${this.player.level}\nScore: ${this.score}`;
-      this.beep(140, 0.35);
     }
   }
 
-  wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-  beep(freq, dur) {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = freq;
-      o.type = 'square';
-      g.gain.setValueAtTime(0.07, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-      o.start(); o.stop(ctx.currentTime + dur);
-    } catch(e) {}
+  wait(ms) {
+    return new Promise(r => setTimeout(r, ms));
   }
 }
 
-const engine = new BattleEngine();
+// Start the engine
+window.addEventListener("DOMContentLoaded", () => {
+  new BattleEngine();
+});
 </script>
 </body>
 </html>
