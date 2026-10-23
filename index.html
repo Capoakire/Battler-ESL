@@ -13,7 +13,9 @@
     --bad: #ef4444;
     --gold: #fbbf24;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: system-ui, -apple-system, sans-serif;
     background: linear-gradient(135deg, #0f172a, #1e1b4b);
@@ -24,15 +26,18 @@
     align-items: center;
     padding: 12px;
   }
+
   #game {
     width: 100%;
     max-width: 760px;
+    min-height: 560px;          /* ← THIS was the missing piece */
     background: var(--card);
     border-radius: 20px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     overflow: hidden;
     position: relative;
   }
+
   .header {
     background: linear-gradient(90deg, #1e3a8a, #4c1d95);
     padding: 12px 16px;
@@ -42,22 +47,24 @@
     font-size: 0.95rem;
   }
   .header h1 { font-size: 1.15rem; font-weight: 700; }
+
   .arena {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     padding: 16px 14px 10px;
   }
+
   .fighter {
     background: rgba(15,23,42,0.7);
     border-radius: 14px;
     padding: 12px;
     text-align: center;
     border: 2px solid transparent;
-    position: relative;
   }
   .fighter.player { border-color: #3b82f6; }
   .fighter.enemy  { border-color: #a855f7; }
+
   .emoji {
     font-size: 3.8rem;
     line-height: 1;
@@ -67,6 +74,7 @@
   .fighter.hit .emoji { animation: shake 0.35s; }
   .fighter.crit .emoji { animation: critPulse 0.45s; }
   .fighter.defeat .emoji { animation: fall 0.7s forwards; }
+
   @keyframes shake {
     0%,100% { transform: translateX(0); }
     25% { transform: translateX(-8px); }
@@ -80,6 +88,7 @@
   @keyframes fall {
     to { transform: translateY(40px) rotate(15deg); opacity: 0; }
   }
+
   .name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
   .status {
     font-size: 0.72rem;
@@ -87,6 +96,7 @@
     margin-bottom: 4px;
     color: #fbbf24;
   }
+
   .hp-bar {
     height: 12px;
     background: #334155;
@@ -102,6 +112,7 @@
   .player .hp-fill { background: linear-gradient(90deg, #22c55e, #16a34a); }
   .enemy  .hp-fill { background: linear-gradient(90deg, #a855f7, #7c3aed); }
   .hp-text { font-size: 0.78rem; opacity: 0.85; }
+
   #log {
     height: 90px;
     overflow-y: auto;
@@ -117,10 +128,8 @@
   #log .info { color: #93c5fd; }
   #log .crit { color: #fbbf24; font-weight: 700; }
   #log .status { color: #c084fc; }
-  .tabs {
-    display: flex;
-    background: #0f172a;
-  }
+
+  .tabs { display: flex; background: #0f172a; }
   .tab {
     flex: 1;
     padding: 10px;
@@ -132,10 +141,8 @@
     border: none;
     color: #94a3b8;
   }
-  .tab.active {
-    background: #334155;
-    color: white;
-  }
+  .tab.active { background: #334155; color: white; }
+
   #actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -162,36 +169,43 @@
     font-weight: 400;
     margin-top: 2px;
   }
+
+  /* Screens */
   .screen, #levelup {
     position: absolute;
     inset: 0;
-    background: rgba(15,23,42,0.96);
+    background: rgba(15, 23, 42, 0.97);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     z-index: 20;
     text-align: center;
     padding: 28px;
   }
   #levelup { z-index: 30; }
-  .screen h2, #levelup h2 { font-size: 1.9rem; }
+  .screen h2, #levelup h2 { font-size: 1.9rem; margin-bottom: 4px; }
   #levelup h2 { color: var(--gold); }
+  .screen p { opacity: 0.85; max-width: 320px; line-height: 1.4; }
+
   .btn {
     background: var(--accent);
     color: #0f172a;
     border: none;
-    padding: 13px 28px;
+    padding: 14px 32px;
     border-radius: 12px;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
   }
+  .btn:hover { transform: scale(1.04); }
+
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
+
 <div id="game">
   <!-- Start Screen -->
   <div id="start-screen" class="screen">
@@ -206,6 +220,7 @@
       <h1>Daily Routine RPG</h1>
       <div>Lv.<span id="level">1</span> · <span id="stage">Battle 1</span> · Score <span id="score">0</span></div>
     </div>
+
     <div class="arena">
       <div class="fighter player" id="player-card">
         <div class="emoji" id="player-emoji">🦸</div>
@@ -222,7 +237,9 @@
         <div class="hp-text" id="enemy-hp-text">HP 30/30</div>
       </div>
     </div>
+
     <div id="log"></div>
+
     <div class="tabs">
       <button class="tab active" data-tab="attack">Attack</button>
       <button class="tab" data-tab="item">Items</button>
@@ -260,33 +277,41 @@ const ITEMS = [
 ];
 
 const ENEMIES = [
-  { name: "Wake up",     emoji: "🛏️", maxHp: 34, atk: 8,  moves: [
-    { name: "Snooze", power: 7, acc: 90 }, { name: "Heavy Blanket", power: 11, acc: 80 },
+  { name: "Wake up", emoji: "🛏️", maxHp: 34, atk: 8, moves: [
+    { name: "Snooze", power: 7, acc: 90 },
+    { name: "Heavy Blanket", power: 11, acc: 80 },
     { name: "Dream Drift", power: 5, acc: 95, effect: "sleep" }
   ]},
-  { name: "Brush teeth", emoji: "🪥", maxHp: 38, atk: 9,  moves: [
-    { name: "Foam Spray", power: 9, acc: 95 }, { name: "Mint Sting", power: 12, acc: 85, effect: "burn" },
+  { name: "Brush teeth", emoji: "🪥", maxHp: 38, atk: 9, moves: [
+    { name: "Foam Spray", power: 9, acc: 95 },
+    { name: "Mint Sting", power: 12, acc: 85, effect: "burn" },
     { name: "Brush Combo", power: 8, acc: 100 }
   ]},
-  { name: "Commute",     emoji: "🚌", maxHp: 42, atk: 10, moves: [
-    { name: "Traffic Jam", power: 10, acc: 90 }, { name: "Late Bell", power: 14, acc: 75, effect: "stun" },
+  { name: "Commute", emoji: "🚌", maxHp: 42, atk: 10, moves: [
+    { name: "Traffic Jam", power: 10, acc: 90 },
+    { name: "Late Bell", power: 14, acc: 75, effect: "stun" },
     { name: "Crowd Push", power: 9, acc: 95 }
   ]},
-  { name: "Homework",    emoji: "📚", maxHp: 46, atk: 11, moves: [
-    { name: "Page Flip", power: 10, acc: 100 }, { name: "Deadline Panic", power: 15, acc: 80, effect: "burn" },
+  { name: "Homework", emoji: "📚", maxHp: 46, atk: 11, moves: [
+    { name: "Page Flip", power: 10, acc: 100 },
+    { name: "Deadline Panic", power: 15, acc: 80, effect: "burn" },
     { name: "Equation Storm", power: 11, acc: 90 }
   ]},
-  { name: "Dinner",      emoji: "🍲", maxHp: 40, atk: 10, moves: [
-    { name: "Spice Burn", power: 12, acc: 85, effect: "burn" }, { name: "Full Plate", power: 9, acc: 100 },
+  { name: "Dinner", emoji: "🍲", maxHp: 40, atk: 10, moves: [
+    { name: "Spice Burn", power: 12, acc: 85, effect: "burn" },
+    { name: "Full Plate", power: 9, acc: 100 },
     { name: "Chop Attack", power: 13, acc: 80 }
   ]},
-  { name: "Sleep",       emoji: "🌙", maxHp: 44, atk: 11, moves: [
-    { name: "Yawn Wave", power: 9, acc: 95, effect: "sleep" }, { name: "Pillow Slam", power: 14, acc: 80 },
+  { name: "Sleep", emoji: "🌙", maxHp: 44, atk: 11, moves: [
+    { name: "Yawn Wave", power: 9, acc: 95, effect: "sleep" },
+    { name: "Pillow Slam", power: 14, acc: 80 },
     { name: "Deep Slumber", power: 7, acc: 100, effect: "sleep" }
   ]},
   { name: "The Teacher", emoji: "👨‍🏫", maxHp: 62, atk: 13, isBoss: true, moves: [
-    { name: "Lesson Plan", power: 13, acc: 90 }, { name: "Pop Quiz", power: 17, acc: 75, effect: "stun" },
-    { name: "Detention", power: 11, acc: 100, effect: "burn" }, { name: "Final Exam", power: 20, acc: 70 }
+    { name: "Lesson Plan", power: 13, acc: 90 },
+    { name: "Pop Quiz", power: 17, acc: 75, effect: "stun" },
+    { name: "Detention", power: 11, acc: 100, effect: "burn" },
+    { name: "Final Exam", power: 20, acc: 70 }
   ]}
 ];
 
@@ -422,7 +447,6 @@ class BattleEngine {
     this.disableActions(true);
     this.guard = false;
 
-    // Sleep / Stun
     if (this.player.status === "sleep" || this.player.status === "stun") {
       this.log(`You are ${this.player.status} and can't move!`, "status");
       this.player.statusTurns--;
@@ -443,7 +467,7 @@ class BattleEngine {
       return;
     }
 
-    if (move.power === 0) { // Focus Guard
+    if (move.power === 0) {
       this.guard = true;
       this.player.status = null;
       this.player.statusTurns = 0;
@@ -456,6 +480,7 @@ class BattleEngine {
 
     let dmg = this.calcDamage(this.player.atk + this.player.atkBoost, move.power);
     const isCrit = Math.random() * 100 < move.crit;
+
     if (isCrit) {
       dmg = Math.floor(dmg * 1.75);
       this.$.enemyCard.classList.add("crit");
@@ -470,7 +495,6 @@ class BattleEngine {
     await this.wait(550);
     this.$.enemyCard.classList.remove("hit", "crit");
 
-    // Enemy burn tick
     if (this.enemy.status === "burn" && this.enemy.hp > 0) {
       const burn = Math.max(2, Math.floor(this.enemy.maxHp * 0.06));
       this.enemy.hp = Math.max(0, this.enemy.hp - burn);
@@ -506,6 +530,7 @@ class BattleEngine {
       this.player.statusTurns = 0;
       this.log("Used Focus Pill! Status cured.", "good");
     }
+
     this.updateBars();
     this.updateStatusDisplay();
     await this.wait(700);
@@ -526,6 +551,7 @@ class BattleEngine {
     }
 
     const move = e.moves[Math.floor(Math.random() * e.moves.length)];
+
     if (Math.random() * 100 > move.acc) {
       this.log(`${e.name} used ${move.name}... missed!`, "info");
       await this.wait(700);
@@ -549,7 +575,6 @@ class BattleEngine {
     await this.wait(500);
     this.$.playerCard.classList.remove("hit");
 
-    // Player burn tick
     if (this.player.status === "burn" && this.player.hp > 0) {
       const burn = Math.max(2, Math.floor(this.player.maxHp * 0.05));
       this.player.hp = Math.max(0, this.player.hp - burn);
@@ -599,11 +624,14 @@ class BattleEngine {
     this.player.level++;
     this.player.exp -= this.player.nextExp;
     this.player.nextExp = Math.floor(this.player.nextExp * 1.45);
+
     const hpGain = 6 + Math.floor(Math.random() * 4);
     const atkGain = 1 + (Math.random() < 0.5 ? 1 : 0);
+
     this.player.maxHp += hpGain;
     this.player.hp = this.player.maxHp;
     this.player.atk += atkGain;
+
     this.$.level.textContent = this.player.level;
     this.$.levelupText.innerHTML = `
       You reached <strong>Level ${this.player.level}</strong>!<br>
@@ -671,7 +699,6 @@ class BattleEngine {
   }
 }
 
-// Start the engine
 window.addEventListener("DOMContentLoaded", () => {
   new BattleEngine();
 });
